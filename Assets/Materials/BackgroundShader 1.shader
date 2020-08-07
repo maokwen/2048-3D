@@ -1,75 +1,55 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+﻿
+Shader "Custom/BackgroundShader Anim" {
 
-Shader "Custom/BackgroundShader"
-{
-    Properties
-    {
-    [KeywordEnum(X, Y)] _FadeWith ("Fade With", Float) = 0
-        _Color1 ("Color", Color) = (1,1,1,1)
-        _Color2 ("Color", Color) = (0,0,0,1)
-        [PowerSlider(1)] _Weights ("Weights", Range (0.0, 2.0)) = 1.0
-    }
-    SubShader
-    {
-        Pass
-        {
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
+	Properties {
+	}
 
-            #include "UnityCG.cginc"
+	SubShader {
+		Tags { "RenderType" = "Transparent" "Queue" = "Transparent" }
 
-            struct appdata
-            {
-                float4 vertex : POSITION;
-                float2 uv : TEXCOORD0;
-            };
+		Pass {
+			ZWrite Off
+			//Blend SrcAlpha OneMinusSrcAlpha
 
-            struct v2f
-            {
-                float2 uv : TEXCOORD0;
-                float4 vertex : SV_POSITION;
-            };
+			CGPROGRAM
 
-            fixed4 _Color1;
-            fixed4 _Color2;
-            float _Weights;
+			#pragma vertex vert
+			#pragma fragment frag
+			#include "UnityCG.cginc"
 
-            //计算给定point点到经过linePoint的直线line的距离
-            float getPointLineDist(float2 pt, float2 linePoint, float2 ln)
-            {
-                float dist;
-                float2 point2point = pt - linePoint;
-                dist = length(dot(pt, ln) * ln/length(ln) - point2point);
-                return dist;
-            }
+			struct VertexInput {
+				fixed4 vertex : POSITION;
+				fixed2 uv:TEXCOORD0;
+				fixed4 tangent : TANGENT;
+				fixed3 normal : NORMAL;
+			};
 
-            v2f vert (appdata v)
-            {
-                v2f o;
-                o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = v.uv;
-                return o;
-            }
+			struct VertexOutput {
+				fixed4 pos : SV_POSITION;
+				fixed2 uv:TEXCOORD0;
+			};
 
-            //注意，uv的最大值是(1, 1)
-            fixed4 frag (v2f i) : SV_Target
-            {
-                fixed4 col;
-                float2 pt;                      //point
-                float2 linePoint = float2(1,1);
-                float2 ln = float2(-1, 1);      //line
+			VertexOutput vert (VertexInput v) {
+				VertexOutput o;
+				o.pos = UnityObjectToClipPos (v.vertex);
+				o.uv = v.uv;
 
-                pt = float2(i.uv.x, i.uv.y * 1);
-                float pointLineDist = getPointLineDist(pt, linePoint, ln);
-                float maxLineDist = getPointLineDist(float2(0, 0), linePoint, ln);
+				return o;
+			}
 
-                float lp = pointLineDist / maxLineDist * _Weights;
-                col = lerp(_Color1, _Color2, lp);
+			fixed4 frag(VertexOutput i) : SV_Target {
+	
+				// Normalized pixel coordinates (from 0 to 1)
+				fixed2 uv = i.uv/1;
 
-                return col;
-            }
-            ENDCG
-        }
-    }
+				// Time varying pixel color
+				fixed3 col = 0.5 + 0.5*cos(_Time.y+uv.xyx+fixed3(0,2,4));
+
+				// Output to screen
+				return fixed4(col,1.0);
+			}
+
+			ENDCG
+		}
+	}
 }

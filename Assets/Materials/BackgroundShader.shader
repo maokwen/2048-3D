@@ -11,6 +11,8 @@ Shader "Custom/BackgroundShader"
     }
     SubShader
     {
+        //Blend SrcAlpha OneMinusSrcAlpha
+
         Pass
         {
             CGPROGRAM
