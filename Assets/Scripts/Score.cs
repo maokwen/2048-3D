@@ -6,11 +6,11 @@ public class Score : MonoBehaviour
 {
     public int score { get; set; }
 
-    private UILabel text;
+    private TextMesh text;
 
     private void Awake()
     {
-        text = GetComponent<UILabel>();
+        text = GetComponent<TextMesh>();
         text.text = "0";
     }
 

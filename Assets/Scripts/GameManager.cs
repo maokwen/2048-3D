@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
     public GameObject titlePanel;
     public GameObject gameoverPanel;
     public GameObject tilePrefab;
-    public UILabel scoreText;
+    public TextMesh scoreText;
 
     private readonly Tile[,] tiles = new Tile[4, 4];
     public readonly List<Transform> slots = new List<Transform>();
@@ -33,6 +33,9 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 300;
+
         // get slots
         foreach (var child in playgrouond.transform)
         {
@@ -49,10 +52,10 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            StartCoroutine(GenerateTile());
-        }
+        //    if (Input.GetKeyDown(KeyCode.G))
+        //    {
+        //        StartCoroutine(GenerateTile());
+        //    }
 
         if (Input.GetKeyDown(KeyCode.W))
         {
@@ -111,7 +114,6 @@ public class GameManager : MonoBehaviour
     {
         if (EmptyTileExists() == false)
         {
-            StartCoroutine(GameOver());
             yield break;
         }
 
@@ -127,8 +129,6 @@ public class GameManager : MonoBehaviour
         Tile t = newTile.GetComponent<Tile>();
         tiles[row, col] = t;
         t.ApplyStyle();
-
-        t.GetComponent<Animator>().SetTrigger("Generate");
     }
 
     #endregion

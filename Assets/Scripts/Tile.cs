@@ -65,7 +65,7 @@ public class Tile : MonoBehaviour
     {
         while (gameObject.transform.localScale.y < yScale)
         {
-            gameObject.transform.localScale = new Vector3(1, gameObject.transform.localScale.y + 0.05f, 1);
+            gameObject.transform.localScale = new Vector3(1, gameObject.transform.localScale.y + yScale * 10 * Time.deltaTime, 1);
             yield return null;
         }
         gameObject.transform.localScale = new Vector3(1, yScale, 1);
