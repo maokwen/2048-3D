@@ -61,6 +61,11 @@ public class GameManager : MonoBehaviour
         {
             StartCoroutine(GameOver());
         }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
     }
 
     #region tile generate
